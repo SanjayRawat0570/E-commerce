@@ -1,22 +1,19 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'sanjayrawat0570@gmail.com',
-    pass: 'juue hhbu kmao vsxc' 
-  }
-});
+exports.sendOTP = async (email, otp) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "sanjayrawat0570@gmail.com",
+      pass: "juue hhbu kmao vsxc", 
+    },
+  });
 
-const mailOptions = {
-  from: 'sanjayrawat0570@gmail.com',
-  to: 'sanjayrawat5764@gmail.com', 
-  subject: 'Simple Email from Node.js',
-  text: 'Hello! This is a simple text email using Nodemailer.'
+  await transporter.sendMail({
+    from: "sanjayrawat0570@gmail.com", 
+    to: email,
+    subject: "Your OTP Code",
+    html: `<h2>Your OTP is ${otp}</h2><p>Valid for 10 minutes</p>`,
+  });
 };
-
-transporter.sendMail(mailOptions, (err, info) => {
-  if (err) return console.error('Failed to send email:', err);
-  console.log('Email sent successfully:', info.response);
-});
 
