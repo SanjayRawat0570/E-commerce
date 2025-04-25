@@ -24,11 +24,11 @@ exports.sendOTP = async (email, otp) => {
     // Send the email
     const info = await transporter.sendMail(mailOptions);
 
-    console.log("✅ OTP sent to:", email);
-    console.log("📨 Message ID:", info.messageId);
+    //console.log("✅ OTP sent to:", email);
+    //console.log("📨 Message ID:", info.messageId);
     return true;
   } catch (error) {
-    console.error("❌ Error sending OTP email:", error.message);
+    //console.error("❌ Error sending OTP email:", error.message);
     return false;
   }
 };
