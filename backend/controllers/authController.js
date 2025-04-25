@@ -6,6 +6,8 @@ const generateOTP = require("../utils/generateOTP");
 const { sendOTP } = require("../utils/sendEmail");
 
 
+
+
 // Signup
 exports.signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -59,12 +61,21 @@ exports.verifyOTP = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    console.log("Login Request Body:", req.body); // Debugging line
+
     const user = await User.findOne({ email });
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
+    // If the user is not verified, send OTP
     if (!user.isVerified) {
       const otp = generateOTP();
       user.otp = otp;
@@ -74,33 +85,14 @@ exports.login = async (req, res) => {
       return res.status(403).json({ error: "Email not verified. OTP resent." });
     }
 
+    // Generate JWT token if everything is correct
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+
     res.json({ token, user });
+
   } catch (err) {
-    console.error(err);
+    console.error("Error in login:", err);
     res.status(500).json({ error: "Server error during login" });
-  }
-};
-
-// Send OTP for password reset
-exports.sendOTPReset = async (req, res) => {
-  try {
-    const { email } = req.body;
-    const user = await User.findOne({ email });
-    
-    
-    if (!user) return res.status(400).json({ error: "User not found" });
-
-    const otp = generateOTP();
-    user.otp = otp;
-    user.otpExpires = Date.now() + 10 * 60 * 1000;
-    await user.save();
-
-    await sendOTP(email, otp);
-    res.json({ msg: "OTP sent to email" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Something went wrong while sending OTP" });
   }
 };
 
@@ -149,3 +141,48 @@ exports.reset = async (req, res) => {
     res.status(500).json({ error: "Server error during password reset" });
   }
 };
+
+
+
+
+
+
+
+
+
+// sendOTP.js
+// const nodemailer = require("nodemailer");
+
+// Function to send OTP to the user's email
+exports.sendOTP = async (email, otp) => {
+  try {
+    // Create a transporter using Gmail
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "sanjayrawat0570@gmail.com", // your Gmail
+        pass: "juue hhbu kmao vsxc",       // app password (not your Gmail password)
+      },
+    });
+
+    // Email content
+    const mailOptions = {
+      from: "sanjayrawat0570@gmail.com",
+      to: email, // ✅ dynamic recipient
+      subject: "Your OTP Code",
+      html: `<h2>Your OTP is: <b>${otp}</b></h2><p>This OTP is valid for 10 minutes.</p>`,
+    };
+
+    // Send the email
+    const info = await transporter.sendMail(mailOptions);
+
+    console.log("✅ OTP sent to:", email);
+    console.log("📨 Message ID:", info.messageId);
+    return true;
+  } catch (error) {
+    console.error("❌ Error sending OTP email:", error.message);
+    return false;
+  }
+};
+
+
