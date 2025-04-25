@@ -40,11 +40,17 @@ exports.signup = async (req, res) => {
 // Verify OTP
 exports.verifyOTP = async (req, res) => {
   try {
-    const { email, otp } = req.body;
+    const {email, otp } = req.body;  // Now using 'username' instead of 'email' // Debugging line
+    
+    // Find the user based on the username (or another identifier)
     const user = await User.findOne({ email });
+    
+    // Check if the user exists and if the OTP is correct
     if (!user || String(user.otp) !== String(otp) || Date.now() > user.otpExpires) {
       return res.status(400).json({ error: "Invalid or expired OTP" });
     }
+
+    // Mark user as verified and clear OTP details
     user.isVerified = true;
     user.otp = null;
     user.otpExpires = null;
@@ -57,12 +63,11 @@ exports.verifyOTP = async (req, res) => {
   }
 };
 
+
 // Login
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    console.log("Login Request Body:", req.body); // Debugging line
 
     const user = await User.findOne({ email });
 

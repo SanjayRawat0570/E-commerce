@@ -17,7 +17,7 @@ export default function AppRoutes() {
         <Route path="/" element={<Home/>} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/verify" element={<VerifyOTP />} />
+        {/* <Route path="/verify" element={<VerifyOTP />} /> */}
         <Route path="/forgot" element={<ForgotPassword />} />
         {/* <Route path="/reset-password" element={<ResetPassword />} /> */}
         <Route path="/reset-password" element={<Reset />} />
