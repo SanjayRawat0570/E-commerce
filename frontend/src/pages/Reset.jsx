@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import Login from './Login'
 import { useNavigate } from 'react-router-dom'
 
 function Reset() {
@@ -51,27 +50,54 @@ function Reset() {
         }
     }
 
-
-
     return (
-        <>
-            <div className='flex flex-col items-center justify-center min-h-screen bg-gray-100'>
-                <h2>Reset Password</h2>
-                <input onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Email" />
-                <input onChange={(e) => setOtp(e.target.value)} type="text" placeholder="OTP" />
-                <input onChange={(e) => setNewPassword(e.target.value)} type="password" placeholder="New Password" />
-                <div>
-                    <button onClick={sendOtp} >send otp</button>
+        <div className='flex items-center justify-center min-h-screen bg-gray-100'>
+            <div className="bg-white p-8 rounded-lg shadow-lg w-96">
+                <h2 className="text-2xl font-semibold text-center mb-4">Reset Password</h2>
 
-                    <button onClick={ResetPassword} >Reset Password</button>
+                <input 
+                    onChange={(e) => setEmail(e.target.value)} 
+                    type="email" 
+                    placeholder="Email" 
+                    className="w-full p-3 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+
+                <input 
+                    onChange={(e) => setOtp(e.target.value)} 
+                    type="text" 
+                    placeholder="OTP" 
+                    className="w-full p-3 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+
+                <input 
+                    onChange={(e) => setNewPassword(e.target.value)} 
+                    type="password" 
+                    placeholder="New Password" 
+                    className="w-full p-3 mb-6 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+
+                <div className="flex flex-col gap-4">
+                    <button 
+                        onClick={sendOtp} 
+                        className="w-full py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                    >
+                        Send OTP
+                    </button>
+
+                    <button 
+                        onClick={ResetPassword} 
+                        className="w-full py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                    >
+                        Reset Password
+                    </button>
                 </div>
 
                 {isResetSuccessful &&
                     navigate('/login')
                 }
             </div>
-        </>
+        </div>
     )
 }
 
-export default Reset
+export default Reset;
